@@ -88,6 +88,8 @@ public:
 	int getWidth();
 	void printMap(std::string message);
 
+	void findShortestPath();
+
 	Room* startRoom;
 	Room* endRoom;
 

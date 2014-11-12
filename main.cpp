@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "src/GeneratedMap.hpp"
+#include "src/DungeonMap.hpp"
 
 const int SCREEN_WIDTH = 1250;
 const int SCREEN_HEIGHT = 800;
@@ -97,6 +98,7 @@ SDL_Surface* loadSurface(std::string path)
 {
 	SDL_Surface* optimizedSurface = NULL;
 	SDL_Surface* loadedSurface = IMG_Load(path.c_str());
+	
 
 	if (loadedSurface == NULL)
 		printf("Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError());
@@ -132,6 +134,8 @@ int main(int argc, char* args[])
 	GeneratedMap map(mapwidth, mapheight);
 	map.generateMap();
 
+	
+
 	//Start up SDL and create window
 	if (!init())
 	{
@@ -146,6 +150,11 @@ int main(int argc, char* args[])
 		}
 		else
 		{
+			SDL_Texture* tx =  SDL_GetRenderTarget(renderer);
+			DungeonMap dm(&map, "Resources/Images/combined2.png", renderer);
+			SDL_SetRenderTarget(renderer, tx);
+			
+
 			bool quit = false;
 			SDL_Event e;
 
@@ -172,6 +181,11 @@ int main(int argc, char* args[])
 						isred = false;
 					if (currentKeyStates[SDL_SCANCODE_X])
 						isred = true;
+
+					if (currentKeyStates[SDL_SCANCODE_LEFT])
+						dm.destRect.x--;
+					if (currentKeyStates[SDL_SCANCODE_RIGHT])
+						dm.destRect.x++;
 
 					if (currentKeyStates[SDL_SCANCODE_ESCAPE])
 						quit = true;
@@ -221,10 +235,24 @@ int main(int argc, char* args[])
 				SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
 				SDL_RenderClear(renderer);
 
-				DrawMap(map);
+				//DrawMap(map);
+				
+				//SDL_BlitSurface(dm.dungeonImg, NULL, gScreenSurface, &dm.destRect);
+				//SDL_UpdateWindowSurface(gWindow);
+
+				SDL_Rect screenRect;
+				screenRect.x = screenRect.y = 0;
+				screenRect.w =  SCREEN_WIDTH;
+				screenRect.h = SCREEN_HEIGHT;
+				SDL_RenderCopy(renderer, dm.dungeonTex, &screenRect, NULL);// &dm.destRect);
+
+				//SDL_RenderCopyEx(renderer, dm.dungeonTex, NULL, NULL, 0, NULL, SDL_FLIP_NONE);
+
 
 				SDL_RenderPresent(renderer);
 				SDL_Delay(15);
+				
+				
 			}
 		}
 	}

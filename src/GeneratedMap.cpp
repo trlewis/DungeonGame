@@ -112,7 +112,10 @@ GeneratedMap::GeneratedMap(const int width, const int height)
 	myHeight = height;
 }
 
+//! Gets map height in cells
 int GeneratedMap::getHeight() { return myHeight; }
+
+//! Gets map width in cells
 int GeneratedMap::getWidth() { return myWidth; }
 
 void GeneratedMap::printMap(std::string message)
@@ -707,4 +710,9 @@ Room* GeneratedMap::createRoom(Vector2i entrance, Vector2i from)
 		return r;
 	}
 	return nullptr;
+}
+
+void GeneratedMap::findShortestPath()
+{
+	
 }
