@@ -73,15 +73,9 @@ class GeneratedMap
 public:
 	GeneratedMap(const int width, const int height);
 	
-	//static const int DEFAULT_ROOM_SIZE = 3;
 	static const int MAX_ROOM_WIDTH = 3;
 	static const int MAX_ROOM_HEIGHT = 3;
 	static const int DEFAULT_MAP_SIZE = 20;
-
-	static const int SHIFT_BOTH = 0;
-	static const int SHIFT_HORIZONTAL = 1;
-	static const int SHIFT_VERTICAL = 2;
-
 
 	void generateMap();
 	int getHeight();
@@ -99,16 +93,14 @@ public:
 	std::vector<Room*> roomStack;
 private:
 	int myHeight;
-	std::vector<std::vector<char>> myMapCells;
-	int myWidth;	
+	int myWidth;
+	std::vector<std::vector<char>> myMapCells;	
 
-	//bool isEndReachable();
 	void cleanupTest();
 	void removeEmpties();
 	bool isRoomInBounds(Vector2i &topLeft, Vector2i &bottomRight);
-	bool canPlaceRoom(Vector2i &topLeft, Vector2i &bottomRight);// , bool placingEmpty);//, bool placingStartFinish);
+	bool canPlaceRoom(Vector2i &topLeft, Vector2i &bottomRight);
 	void createEmptyCells();
-	//void createStartEndRooms();
 	void replacePeriods(Vector2i topLeft, Vector2i bottomRight, char replacement);
 	void placeRoom(Room* room);
 	bool allUnassignedReachable();

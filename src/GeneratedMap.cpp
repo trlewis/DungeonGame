@@ -137,8 +137,8 @@ void GeneratedMap::printMap(std::string message)
 
 void GeneratedMap::generateMap()
 {
-	//clear and initialize rooms
-	myMapCells.clear();
+	//create empty map
+	myMapCells = std::vector<std::vector<char>>();
 	for (int y = 0; y < myHeight; y++)
 	{
 		std::vector<char> row = std::vector<char>();
@@ -152,8 +152,6 @@ void GeneratedMap::generateMap()
 
 	srand(time(0));
 	//srand(5);
-
-	//printMap("Start and end cells:");
 
 	//add in purposely blank cells, so there's some emptiness
 	createEmptyCells();
@@ -176,11 +174,12 @@ bool GeneratedMap::allUnassignedReachable()
 		start.y = rand() % myHeight;
 	}
 	queue.push(start);
+
 	while (queue.size() > 0)
 	{
 		Vector2i cell = queue.front();
 		queue.pop();
-
+		
 		//left
 		if (cell.x > 0 && myMapCells[cell.y][cell.x - 1] == '.')
 		{
@@ -214,6 +213,7 @@ bool GeneratedMap::allUnassignedReachable()
 		}
 	}
 
+	//make sure no unassigned cells remain
 	bool result = true;
 	for (int y = 0; y < myHeight; y++)
 	{
@@ -318,16 +318,16 @@ void GeneratedMap::createEmptyCells()
 				height = 2;
 
 			//randomly pick location
-			int xpos = rand() % (myWidth - (width)); //+1 to bring to edges
+			int xpos = rand() % (myWidth - (width)); 
 			int ypos = rand() % (myHeight - (height));
 
-			//see if room will fit
+			//randomly pick a size
 			Vector2i topLeft(xpos, ypos);
 			Vector2i bottomRight(xpos + width , ypos + height);
-
-			//if it does then add it to list
+			
 			if (canPlaceRoom(topLeft, bottomRight))
 			{
+				//if it fits then add it to the list
 				Room emptyRoom(topLeft, bottomRight);
 				emptyRooms.push_back(emptyRoom);
 
@@ -337,9 +337,7 @@ void GeneratedMap::createEmptyCells()
 				//recalculate number of empty cells
 				emptyCellCount = 0;
 				for (int i = 0; i < emptyRooms.size(); i++)
-				{
 					emptyCellCount += emptyRooms[i].getArea();
-				}
 			}				
 		}
 
@@ -415,7 +413,6 @@ void GeneratedMap::fillRooms()
 	placeRoom(seedRoom);
 	roomStack.push_back(seedRoom);
 
-
 	while (roomStack.size() > 0)
 	{
 		//get the next room and remove it from the list/stack
@@ -431,6 +428,7 @@ void GeneratedMap::fillRooms()
 				possibleStarts.push_back(Vector2i(room->topLeft.x - 1, y));
 			std::random_shuffle(possibleStarts.begin(), possibleStarts.end());
 			
+			//try to find an unassigned adjacent cell to the left
 			Vector2i entrance;
 			bool validStart = false;
 			do
@@ -471,6 +469,7 @@ void GeneratedMap::fillRooms()
 				possibleStarts.push_back(Vector2i(room->bottomRight.x + 1, y));
 			std::random_shuffle(possibleStarts.begin(), possibleStarts.end());
 
+			//try to find an unassigned adjacent cell to the right
 			Vector2i entrance;
 			bool validStart = false;
 			do
@@ -512,6 +511,7 @@ void GeneratedMap::fillRooms()
 				possibleStarts.push_back(Vector2i(x, room->topLeft.y - 1));
 			std::random_shuffle(possibleStarts.begin(), possibleStarts.end());
 
+			//try to find an unassigned adjacent cell to the top
 			Vector2i entrance;
 			bool validStart = false;
 			do
@@ -551,9 +551,9 @@ void GeneratedMap::fillRooms()
 			std::vector<Vector2i> possibleStarts;
 			for (int x = room->topLeft.x; x <= room->bottomRight.x; x++)
 				possibleStarts.push_back(Vector2i(x, room->bottomRight.y + 1));
-
 			std::random_shuffle(possibleStarts.begin(), possibleStarts.end());
 
+			//try to find an unassigned adjacent cell to the bottom
 			Vector2i entrance;
 			bool validStart = false;
 			do

@@ -235,7 +235,7 @@ int main(int argc, char* args[])
 				SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
 				SDL_RenderClear(renderer);
 
-				//DrawMap(map);
+				DrawMap(map);
 				
 				//SDL_BlitSurface(dm.dungeonImg, NULL, gScreenSurface, &dm.destRect);
 				//SDL_UpdateWindowSurface(gWindow);
@@ -244,7 +244,7 @@ int main(int argc, char* args[])
 				screenRect.x = screenRect.y = 0;
 				screenRect.w =  SCREEN_WIDTH;
 				screenRect.h = SCREEN_HEIGHT;
-				SDL_RenderCopy(renderer, dm.dungeonTex, &screenRect, NULL);// &dm.destRect);
+				//SDL_RenderCopy(renderer, dm.dungeonTex, &screenRect, NULL);// &dm.destRect);
 
 				//SDL_RenderCopyEx(renderer, dm.dungeonTex, NULL, NULL, 0, NULL, SDL_FLIP_NONE);
 
