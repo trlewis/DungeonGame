@@ -1,43 +1,35 @@
-
-//Using SDL, SDL_image, standard IO, and strings
+//Using SDL, standard IO, and strings
 #include <SDL.h>
-#include <SDL_image.h>
 #include <stdio.h>
 #include <string>
 
 #include <iostream>
 #include <vector>
 
-#include "src/GeneratedMap.hpp"
-#include "src/DungeonMap.hpp"
+#include "include/GeneratedMap.hpp"
+#include "include/DungeonMap.hpp"
 
 const int SCREEN_WIDTH = 1250;
 const int SCREEN_HEIGHT = 800;
 
 bool init();
-bool loadMedia();
 void close();
 
 void DrawMap(GeneratedMap&);
 
-SDL_Surface* loadSurface(std::string path); 
-
 SDL_Window* gWindow = NULL;
 SDL_Surface* gScreenSurface = NULL;
-SDL_Surface* gPNGSurface = NULL;
 SDL_Renderer* renderer = NULL;
 
 bool init()
 {
-	//bool success = true;
-
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
 		printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
 		return false;
 	}
 	
-	gWindow = SDL_CreateWindow("Dungeon Game", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+	gWindow = SDL_CreateWindow("Press G to generate new dungeon", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 	if (gWindow == NULL)
 	{
 		printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
@@ -51,210 +43,90 @@ bool init()
 		return false;
 	}
 
-	//Initialize PNG loading
-	int imgFlags = IMG_INIT_PNG;
-	if (!(IMG_Init(imgFlags) & imgFlags))
-	{
-		printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
-		return false;
-	}
-	
 	gScreenSurface = SDL_GetWindowSurface(gWindow);
 	return true;
-}
-
-bool loadMedia()
-{
-	bool success = true;
-
-	//gPNGSurface = loadSurface("Resources/loaded.png");
-	//if (gPNGSurface == NULL)
-	//{
-	//	printf("Failed to load PNG image!\n");
-	//	success = false;
-	//}
-	
-	return success;
 }
 
 void close()
 {
 	SDL_DestroyRenderer(renderer);
 
-	//Free loaded image
-	SDL_FreeSurface(gPNGSurface);
-	gPNGSurface = NULL;
-
 	//Destroy window
 	SDL_DestroyWindow(gWindow);
 	gWindow = NULL;
 
 	//Quit SDL subsystems
-	IMG_Quit();
 	SDL_Quit();
-}
-
-SDL_Surface* loadSurface(std::string path)
-{
-	SDL_Surface* optimizedSurface = NULL;
-	SDL_Surface* loadedSurface = IMG_Load(path.c_str());
-	
-
-	if (loadedSurface == NULL)
-		printf("Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError());
-	else
-	{
-		optimizedSurface = SDL_ConvertSurface(loadedSurface, gScreenSurface->format, NULL);
-		if (optimizedSurface == NULL)
-			printf("Unable to optimize image %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
-
-		SDL_FreeSurface(loadedSurface);
-	}
-
-	return optimizedSurface;
 }
 
 int main(int argc, char* args[])
 {
-	bool downheld = false;
-	bool upheld = false;
-	bool rightheld = false;
-	bool leftheld = false;
-
-	bool isred = false;
-
-	//int mapwidth = 10;//25;
-	//int mapheight =  8;// 16;
-
 	int mapwidth = 25;
 	int mapheight = 16;
 
-	int roomdrawcount = 2;
-	
 	GeneratedMap map(mapwidth, mapheight);
 	map.generateMap();
-
 	
-
 	//Start up SDL and create window
 	if (!init())
 	{
 		printf("Failed to initialize!\n");
+		close();
+		return 0;
 	}
-	else
+	
+	SDL_Texture* tx =  SDL_GetRenderTarget(renderer);
+	DungeonMap dm(&map, "Resources/Images/combined2.png", renderer);
+	SDL_SetRenderTarget(renderer, tx);
+
+	bool quit = false;
+	SDL_Event e;
+
+	//While application is running
+	while (!quit)
 	{
-		//Load media
-		if (!loadMedia())
+		//Handle events on queue
+		while (SDL_PollEvent(&e) != 0)
 		{
-			printf("Failed to load media!\n");
-		}
-		else
-		{
-			SDL_Texture* tx =  SDL_GetRenderTarget(renderer);
-			DungeonMap dm(&map, "Resources/Images/combined2.png", renderer);
-			SDL_SetRenderTarget(renderer, tx);
-			
+			const Uint8* currentKeyStates = NULL;
+			currentKeyStates = SDL_GetKeyboardState(NULL);
 
-			bool quit = false;
-			SDL_Event e;
-
-			int endx = 0;
-			int endy = 0;
-
-			int playerx = SCREEN_WIDTH / 2;
-			int playery = SCREEN_HEIGHT / 2;
-
-			//While application is running
-			while (!quit)
+			if (currentKeyStates[SDL_SCANCODE_ESCAPE])
+				quit = true;
+			if (currentKeyStates[SDL_SCANCODE_G])
 			{
-				//Handle events on queue
-				while (SDL_PollEvent(&e) != 0)
-				{
-					const Uint8* currentKeyStates = NULL;
-					currentKeyStates = SDL_GetKeyboardState(NULL);
-					upheld = currentKeyStates[SDL_SCANCODE_UP] == 1;// true;
-					downheld = currentKeyStates[SDL_SCANCODE_DOWN] == 1;// true;
-					leftheld = currentKeyStates[SDL_SCANCODE_LEFT] == 1;// true;
-					rightheld = currentKeyStates[SDL_SCANCODE_RIGHT] == 1;// true;
+				map = GeneratedMap(mapwidth, mapheight);
+				map.generateMap();
+			}
 
-					if (currentKeyStates[SDL_SCANCODE_Z])
-						isred = false;
-					if (currentKeyStates[SDL_SCANCODE_X])
-						isred = true;
-
-					if (currentKeyStates[SDL_SCANCODE_LEFT])
-						dm.destRect.x--;
-					if (currentKeyStates[SDL_SCANCODE_RIGHT])
-						dm.destRect.x++;
-
-					if (currentKeyStates[SDL_SCANCODE_ESCAPE])
-						quit = true;
-
-					if (currentKeyStates[SDL_SCANCODE_G])
-					{
-						map = GeneratedMap(mapwidth, mapheight);
-						roomdrawcount = 2;
-						map.generateMap();
-					}
-					if (currentKeyStates[SDL_SCANCODE_F])
-					{
-						while (map.roomStack.size() > 0)
-						{
-							map.fillRooms();
-						}
-					}
-					if (currentKeyStates[SDL_SCANCODE_SPACE])
-					{
-						map.fillRooms();
-						roomdrawcount++;
-					}
-
-						
-
-					switch (e.type)
-					{
-					case SDL_QUIT:
-						quit = true;
-						break;
-					case SDL_MOUSEMOTION:
-						SDL_GetMouseState(&endx, &endy);
-						break;
-					}
-				}
-
-				if (upheld)
-					playery--;
-				if (downheld)
-					playery++;
-				if (leftheld)
-					playerx--;
-				if (rightheld)
-					playerx++;
-
-				//clear screen
-				SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
-				SDL_RenderClear(renderer);
-
-				DrawMap(map);
-				
-				//SDL_BlitSurface(dm.dungeonImg, NULL, gScreenSurface, &dm.destRect);
-				//SDL_UpdateWindowSurface(gWindow);
-
-				SDL_Rect screenRect;
-				screenRect.x = screenRect.y = 0;
-				screenRect.w =  SCREEN_WIDTH;
-				screenRect.h = SCREEN_HEIGHT;
-				//SDL_RenderCopy(renderer, dm.dungeonTex, &screenRect, NULL);// &dm.destRect);
-
-				//SDL_RenderCopyEx(renderer, dm.dungeonTex, NULL, NULL, 0, NULL, SDL_FLIP_NONE);
-
-
-				SDL_RenderPresent(renderer);
-				SDL_Delay(15);
-				
-				
+			switch (e.type)
+			{
+			case SDL_QUIT:
+				quit = true;
+				break;
 			}
 		}
+
+		//clear screen
+		SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
+		SDL_RenderClear(renderer);
+
+		//SDL_BlitSurface(dm.dungeonImg, NULL, gScreenSurface, &dm.destRect);
+		//SDL_UpdateWindowSurface(gWindow);
+
+		// SDL_Rect screenRect;
+		// screenRect.x = screenRect.y = 0;
+		// screenRect.w =  SCREEN_WIDTH;
+		// screenRect.h = SCREEN_HEIGHT;
+		//SDL_RenderCopy(renderer, dm.dungeonTex, &screenRect, NULL);// &dm.destRect);
+
+		//SDL_RenderCopyEx(renderer, dm.dungeonTex, NULL, NULL, 0, NULL, SDL_FLIP_NONE);
+
+		
+		DrawMap(map);
+
+		SDL_RenderPresent(renderer);
+		SDL_Delay(15);
 	}
 
 	//Free resources and close SDL
@@ -271,7 +143,6 @@ void DrawMap(GeneratedMap& map)
 	int tilesPerRoom = 10;
 	int roomBuffer = 1;//each room is 2 tiles from the edge of the cell
 
-	//for (int i = 0; i < map.rooms.size() && i < roomdrawcount; i++)
 	for (int i = 0; i < map.rooms.size(); i++)
 	{
 		Room* room = map.rooms[i];
@@ -289,8 +160,7 @@ void DrawMap(GeneratedMap& map)
 				red = 0xFF;
 			}
 		}
-
-
+		
 		int horizCellCount = room->getWidth() + 1;
 		horizCellCount *= tilesPerRoom;
 		horizCellCount -= 2 * roomBuffer;
@@ -322,7 +192,7 @@ void DrawMap(GeneratedMap& map)
 		if (room->left != nullptr)
 		{
 			Vector2i startingCell = room->left->startingCell;
-			int startx = (startingCell.x + 1) * tilesize * tilesPerRoom;// - roomBuffer;
+			int startx = (startingCell.x + 1) * tilesize * tilesPerRoom;
 			startx -= (tilesize * roomBuffer);
 			int starty = (startingCell.y * tilesize * tilesPerRoom) + ((tilesPerRoom * tilesize) / 2);
 
@@ -372,12 +242,6 @@ void DrawMap(GeneratedMap& map)
 
 			int startx = (startingCell.x * tilesize * tilesPerRoom) + ((tilesPerRoom * tilesize) / 2);
 
-			//Vector2i fromCell = map.rooms[i]->top->previousCell;
-			//int starty = (fromCell.y) * tilesize * tilesPerRoom;
-			//starty -= (tilesize * roomBuffer);
-
-			//int startx = (fromCell.x * tilesize * tilesPerRoom) + ((tilesPerRoom * tilesize) / 2);
-
 			for (int y = 0; y < roomBuffer * 2; y++)
 			{
 				for (int x = 0; x < 2; x++)
@@ -396,11 +260,6 @@ void DrawMap(GeneratedMap& map)
 		{
 			Vector2i thisBottomRight = room->bottomRight;
 			Room* top = map.rooms[i]->top;
-			if (top != nullptr)
-			{
-				int sdfsdf = 4;
-			}
-
 
 			Vector2i startCell = room->bottom->startingCell;
 			int starty = startCell.y * tilesize * tilesPerRoom;

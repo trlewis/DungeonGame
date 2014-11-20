@@ -18,7 +18,10 @@ public:
 private:
 	
 	
-
+	//all if this stuff should hopefully be replaced by a more
+	//sophisticated method of keeping track of tiles. especially
+	//since hopefully there can be several tiles of the same type...
+	//probably need a metadata file to help out with it
 	SDL_Rect tileRects[9];
 
 	static const int TILES_PER_CELL = 10;

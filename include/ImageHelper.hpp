@@ -1,15 +1,22 @@
-#include <SDL.h>
-#include <SDL_image.h>
+#ifndef IMAGE_HELPER_HPP_
+#define IMAGE_HELPER_HPP_
 
 #include <iostream>
 
+#include <SDL.h>
+#include <SDL_image.h>
+
+//not sure how useful these methods will be... at the very least they'll 
+//print out errors I guess.
 
 SDL_Surface* loadSurface2(std::string path)
 {
 	SDL_Surface* loadedSurface = IMG_Load(path.c_str());
 	if (loadedSurface == NULL)
+	{
 		std::cout << "Unable to load iamge !" << path.c_str()
-				<< " SDL_image Error: " << IMG_GetError() << std::endl;
+			<< " SDL_image Error: " << IMG_GetError() << std::endl;
+	}
 
 	return loadedSurface;
 }
@@ -18,12 +25,12 @@ SDL_Texture* loadTexture(std::string path, SDL_Renderer* renderer)
 {
 	SDL_Texture* loadedTexture = IMG_LoadTexture(renderer, path.c_str());
 	if (loadedTexture == NULL)
+	{
 		std::cout << "Unable to load iamge !" << path.c_str()
-				<< " SDL_image Error: " << IMG_GetError() << std::endl;
+			<< " SDL_image Error: " << IMG_GetError() << std::endl;
+	}
 	return loadedTexture;
 }
-
-
 
 SDL_Surface* optimizeSurface(SDL_Surface* surface, SDL_PixelFormat* format)
 {
@@ -33,7 +40,10 @@ SDL_Surface* optimizeSurface(SDL_Surface* surface, SDL_PixelFormat* format)
 	SDL_Surface* optimized = NULL;
 	optimized = SDL_ConvertSurface(surface, format, NULL);
 	if (optimized == NULL)
-		std::cout << "Unable to optimze image! SDL Error: " << SDL_GetError() << std::endl;
+	{
+		std::cout << "Unable to optimze image! SDL Error: " << SDL_GetError()
+			<< std::endl;
+	}
 
 	return optimized;
 }
@@ -46,3 +56,5 @@ SDL_Surface* loadOptimizedSurface(std::string path, SDL_PixelFormat* format)
 
 	return optimizeSurface(loaded, format);
 }
+
+#endif //IMAGE_HELPER_HPP_

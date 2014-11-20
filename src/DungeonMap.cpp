@@ -1,8 +1,5 @@
-#include <SDL_image.h>
-
-#include "DungeonMap.hpp"
-#include "GeneratedMap.hpp"
-#include "ImageHelper.hpp"
+#include "../include/DungeonMap.hpp"
+#include "../include/ImageHelper.hpp"
 
 DungeonMap::DungeonMap(GeneratedMap* generatedMap, std::string mapTilesLocation,
 	SDL_Renderer* renderer)
