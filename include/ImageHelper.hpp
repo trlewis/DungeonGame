@@ -3,8 +3,14 @@
 
 #include <iostream>
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
+//SDL include.
+#ifdef _WIN32
+	#include <SDL.h>
+	#include <SDL_image.h>
+#elif
+	#include <SDL2/SDL.h>
+	#include <SDL2/SDL_image.h>
+#endif
 
 //not sure how useful these methods will be... at the very least they'll 
 //print out errors I guess.

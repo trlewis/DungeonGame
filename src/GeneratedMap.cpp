@@ -1,10 +1,10 @@
-#include "../include/GeneratedMap.hpp"
+#include "GeneratedMap.hpp"
 
-#include <iostream> //cout, endl
-#include <string>
-#include <queue>
-#include <time.h> //time()
 #include <algorithm>
+#include <iostream> //cout, endl
+#include <queue>
+#include <string>
+#include <time.h> //time()
 
 
 GeneratedMap::GeneratedMap(const int width, const int height)

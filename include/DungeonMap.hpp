@@ -1,11 +1,16 @@
 #ifndef DUNGEON_MAP_HPP_
 #define DUNGEON_MAP_HPP_
 
-#include "GeneratedMap.hpp"
 #include <string>
-#include <SDL2/SDL.h>
 
+//SDL include.
+#ifdef _WIN32
+	#include <SDL.h>
+#elif
+	#include <SDL2/SDL.h>
+#endif
 
+#include "GeneratedMap.hpp"
 
 class DungeonMap
 {

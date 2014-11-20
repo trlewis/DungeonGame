@@ -4,8 +4,8 @@
 #include <string>
 #include <vector>
 
-#include "Vector2i.hpp"
 #include "Room.hpp"
+#include "Vector2i.hpp"
 
 /*! This class will generate a dungeon made of rooms and their connections. 
  * It does not do anything involving graphics, this is purely data about 

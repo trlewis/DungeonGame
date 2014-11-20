@@ -1,13 +1,20 @@
 //Using SDL, standard IO, and strings
-#include <SDL2/SDL.h>
+
 #include <stdio.h>
 #include <string>
 
 #include <iostream>
 #include <vector>
 
-#include "include/GeneratedMap.hpp"
-#include "include/DungeonMap.hpp"
+//SDL include
+#ifdef _WIN32
+	#include <SDL.h>
+#elif
+	#include <SDL2/SDL.h>
+#endif
+
+#include "DungeonMap.hpp"
+#include "GeneratedMap.hpp"
 
 const int SCREEN_WIDTH = 1250;
 const int SCREEN_HEIGHT = 800;

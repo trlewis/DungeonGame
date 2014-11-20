@@ -1,4 +1,4 @@
-#include "../include/Room.hpp"
+#include "Room.hpp"
 
 void Room::init()
 {

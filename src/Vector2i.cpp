@@ -1,4 +1,4 @@
-#include "../include/Vector2i.hpp"
+#include "Vector2i.hpp"
 
 Vector2i::Vector2i() {}
 
