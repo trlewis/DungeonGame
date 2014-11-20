@@ -3,8 +3,8 @@
 
 #include <iostream>
 
-#include <SDL.h>
-#include <SDL_image.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 
 //not sure how useful these methods will be... at the very least they'll 
 //print out errors I guess.

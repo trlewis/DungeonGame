@@ -1,6 +1,7 @@
 #ifndef GENERATED_MAP_HPP_
 #define GENERATED_MAP_HPP_
 
+#include <string>
 #include <vector>
 
 #include "Vector2i.hpp"
