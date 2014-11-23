@@ -6,7 +6,7 @@
 //SDL include.
 #ifdef _WIN32
 	#include <SDL.h>
-#elif
+#else
 	#include <SDL2/SDL.h>
 #endif
 
@@ -17,13 +17,19 @@ class DungeonMap
 public:
 	DungeonMap(GeneratedMap* generatedMap, std::string mapTilesLocation, 
 		SDL_Renderer* renderer);
+	void DrawMap(SDL_Renderer* renderer);
 	
 	SDL_Texture* dungeonTex;
 	SDL_Texture* tileSourceTex;
 	SDL_Rect destRect;
+
 private:
-	
-	
+	void createDungeonTexture(SDL_Renderer* renderer);
+	//2D array of ints that hold the indices of the tiles that need to be there
+//	std::vector<std::vector<int>> mapTiles;	
+
+	GeneratedMap* generatedMap;
+
 	//all if this stuff should hopefully be replaced by a more
 	//sophisticated method of keeping track of tiles. especially
 	//since hopefully there can be several tiles of the same type...

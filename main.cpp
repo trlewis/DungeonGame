@@ -9,14 +9,14 @@
 //SDL include
 #ifdef _WIN32
 	#include <SDL.h>
-#elif
+#else
 	#include <SDL2/SDL.h>
 #endif
 
 #include "DungeonMap.hpp"
 #include "GeneratedMap.hpp"
 
-const int SCREEN_WIDTH = 1250;
+const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 800;
 
 bool init();
@@ -36,7 +36,8 @@ bool init()
 		return false;
 	}
 	
-	gWindow = SDL_CreateWindow("Press G to generate new dungeon", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+	gWindow = SDL_CreateWindow("Press G to generate new dungeon", SDL_WINDOWPOS_UNDEFINED,
+		SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 	if (gWindow == NULL)
 	{
 		printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
@@ -104,6 +105,8 @@ int main(int argc, char* args[])
 			{
 				map = GeneratedMap(mapwidth, mapheight);
 				map.generateMap();
+				dm = DungeonMap(&map, "Resources/Images/combined2.png", renderer);
+				SDL_SetRenderTarget(renderer, tx);
 			}
 
 			switch (e.type)
@@ -121,16 +124,17 @@ int main(int argc, char* args[])
 		//SDL_BlitSurface(dm.dungeonImg, NULL, gScreenSurface, &dm.destRect);
 		//SDL_UpdateWindowSurface(gWindow);
 
-		// SDL_Rect screenRect;
-		// screenRect.x = screenRect.y = 0;
-		// screenRect.w =  SCREEN_WIDTH;
-		// screenRect.h = SCREEN_HEIGHT;
-		//SDL_RenderCopy(renderer, dm.dungeonTex, &screenRect, NULL);// &dm.destRect);
+		SDL_Rect screenRect;
+		screenRect.x = screenRect.y = 0;
+		screenRect.w =  SCREEN_WIDTH;
+		screenRect.h = SCREEN_HEIGHT;
+		SDL_RenderCopy(renderer, dm.dungeonTex, &screenRect, NULL);// &dm.destRect);
+		//SDL_RenderCopy(renderer, dm.dungeonTex, NULL, NULL);
 
 		//SDL_RenderCopyEx(renderer, dm.dungeonTex, NULL, NULL, 0, NULL, SDL_FLIP_NONE);
 
 		
-		DrawMap(map);
+		//DrawMap(map);
 
 		SDL_RenderPresent(renderer);
 		SDL_Delay(15);

@@ -1,0 +1,17 @@
+This is just a file to keep track of stuff that needs to be done eventually,
+not really ranked in any sort of order of importance.
+
+## Dungeon stuff
+[ ] Add cycles to dungeons
+[X] Draw basic rooms, no connections
+[ ] Draw connections, don't fix corners
+[ ] Fix corners connections broke
+
+## Text stuff
+- Add in bitmap font support
+	[ ] Load and parse source images
+	[ ] Create textures from given strings
+	[ ] Word wrap/truncate strings into rectangular area
+
+## Game system stuff
+[ ] Add in state/screen manager for menus and whatnot (expand on this)

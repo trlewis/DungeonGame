@@ -14,11 +14,10 @@ LINKER_FLAGS = -lSDL2 -lSDL2_image
 #OBJ_NAME specifies the name of the executable
 OBJ_NAME = bin/dungeongame.sh
 
-#SDL stuff
-#SDL_CFLAGS := $(shell sdl-config --cflags)
-#SDL_LDFLAGS := $(shell sdl-config --libs)
+#include volders
+INCLUDE_FOLDERS = -I include/
 
 #this is the target that compiles our executable
 all : $(OBJS)
-	$(CC) $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o $(OBJ_NAME)
+	$(CC) $(OBJS) $(COMPILER_FLAGS) $(INCLUDE_FOLDERS) $(LINKER_FLAGS) -o $(OBJ_NAME)
 # $(SDL_CFLAGS) $(SDL_LDFLAGS)
