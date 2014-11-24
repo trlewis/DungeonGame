@@ -29,9 +29,13 @@ public:
 
 	Room* startRoom; //!< The "entrance" room to the dungeon.
 	Room* endRoom; //!< The "exit" room of the dungeon.
+	Room* seedRoom; //!< The room from which all others spawn.
 	std::vector<Room*> rooms; //!< All rooms, including start/end.
 	
 private:
+	/*! What percent of dead-ends we will attempt to add connections to.*/
+	static const int CYCLE_PERCENT = 30;
+
 	int myHeight;
 	int myWidth;
 
@@ -65,8 +69,17 @@ private:
 
 	/*! This does the actual flood filling of the rooms into the dungeon. */
 	void fillRooms();
+
+	/*! Adds in cycles so that the dungeon is no longer a tree. */
+	void fixTree();
+
+	/*! Gets all the rooms to the top/left/right/bottom of the given one. */
+	std::vector<Room*> getAdjacentRooms(Room* room);
+
+	/*! Gets the room that is within the */
+	Room* getRoomFromCell(int x, int y);
 	
-	/*! Checks to see that the given boundaries are within the room. */
+	/*! Checks to see that the given boundaries are within the dungeon. */
 	bool isRoomInBounds(Vector2i &topLeft, Vector2i &bottomRight);
 
 	/*! Adds the room to the 2D character array of cells, thus reserving 

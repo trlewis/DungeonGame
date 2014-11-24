@@ -33,6 +33,37 @@ Room::Room(Vector2i topLeft, Vector2i bottomRight, Vector2i start)
 	startingCell = start;
 }
 
+bool Room::areConnected(Room* other)
+{
+	if (left == other || right == other || top == other || bottom == other)
+		return true;
+	
+	if (other->left == this || other->right == this
+		|| other->bottom == this || other->top == this)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+int Room::directionOfOtherRoom(Room* other)
+{
+	if (other->bottomRight.x < topLeft.x)
+		return LEFT;
+
+	if (other->bottomRight.y < topLeft.y)
+		return UP;
+
+	if (other->topLeft.x > bottomRight.x)
+		return RIGHT;
+
+	if (other->topLeft.y > bottomRight.y)
+		return DOWN;
+
+	return 0;
+}
+
 bool Room::isDeadEnd()
 {
 	// is the same as (generally... depending on what NULL is defined as)
@@ -42,12 +73,17 @@ bool Room::isDeadEnd()
 
 bool Room::containsCell(Vector2i &cell)
 {
-	if (topLeft.x >= cell.x && bottomRight.x <= cell.y)
+	if (topLeft.x >= cell.x && bottomRight.x <= cell.x)
 	{
-		if (topLeft.y <= cell.y && bottomRight.x >= cell.x)
+		if (topLeft.y <= cell.y && bottomRight.y >= cell.y)
 			return true;
 	}
 	return false;
+}
+
+bool Room::containsCell(int x, int y)
+{
+	return containsCell(Vector2i(x, y));
 }
 
 int Room::getHeight()

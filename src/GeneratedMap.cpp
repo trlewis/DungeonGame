@@ -35,10 +35,13 @@ void GeneratedMap::generateMap()
 
 	printMap("with empty cells:");
 
-	//now to finally create rooms ._.
+	//now to finally create rooms
 	fillRooms();
 
 	printMap("with rooms!");
+
+	//add in some cycles to reduce backtracking
+	fixTree();
 } 
 
 void GeneratedMap::printMap(std::string message)
@@ -352,6 +355,7 @@ void GeneratedMap::fillRooms()
 	} while (true);
 
 	rooms.push_back(seedRoom);
+	this->seedRoom = seedRoom;
 	placeRoom(seedRoom);
 	roomStack.push_back(seedRoom);
 
@@ -554,6 +558,172 @@ void GeneratedMap::fillRooms()
 		break;
 	} while (true);
 
+}
+
+void GeneratedMap::fixTree()
+{
+	//get all dead ends
+	std::vector<Room*> deadEnds;
+	for (int i = 0; i < rooms.size(); i++)
+	{
+		if (rooms[i]->isDeadEnd())
+			deadEnds.push_back(rooms[i]);
+	}
+	std::random_shuffle(deadEnds.begin(), deadEnds.end());
+
+	int j = 0;
+	int addedCount = 0;
+	int cyclesToAdd = (deadEnds.size() * CYCLE_PERCENT) / 100;
+	//keep adding cycles until the quantity is met or we run out of
+	//dead ends to try
+	while (j < deadEnds.size() && addedCount < cyclesToAdd)
+	{
+		Room* de = deadEnds[j++];
+		std::vector<Room*> adjacentRooms = getAdjacentRooms(de);
+		if (adjacentRooms.size() == 0)
+			continue;
+
+		std::random_shuffle(adjacentRooms.begin(), adjacentRooms.end());
+
+		int i2 = 0;
+		Room* aj = nullptr;
+		//find first non-connected room
+		while (i2 < adjacentRooms.size() && aj == nullptr)
+		{
+			if (!de->areConnected(adjacentRooms[i2]))
+				aj = adjacentRooms[i2];			
+			i2++;
+		}
+
+		//if no non-connected room is found try the next dead-end
+		if (aj == nullptr)
+			continue;
+
+		aj->hasSecondEntrance = true;
+
+		//rooms are adjacent, but not connected, now we connect them... with
+		//wizardry...
+		int directionOfOther = de->directionOfOtherRoom(aj);
+		int miny = 0, minx = 0, shift = 0;
+		if (directionOfOther == Room::LEFT || directionOfOther == Room::RIGHT)
+		{
+			miny = de->topLeft.y >= aj->topLeft.y
+				? de->topLeft.y : aj->topLeft.y;
+			int maxy = de->bottomRight.y <= aj->bottomRight.y
+				? de->bottomRight.y : aj->bottomRight.y;
+			int dy = abs(maxy - miny);
+			shift = dy <= 0 ? 0 : rand() % (dy + 1);
+		}
+		else if (directionOfOther == Room::UP || directionOfOther == Room::DOWN)
+		{
+			minx = de->topLeft.x >= aj->topLeft.x
+				? de->topLeft.x : aj->topLeft.x;
+			int maxx = de->bottomRight.x <= aj->bottomRight.x
+				? de->bottomRight.x : aj->bottomRight.x;
+			int dx = abs(maxx - minx);
+			shift = dx <= 0 ? 0 : rand() % (dx + 1);
+		}
+
+		switch (directionOfOther)
+		{
+		case Room::LEFT:
+			aj->startingCell2 = Vector2i(aj->bottomRight.x, miny + shift);
+			aj->previousCell2 = Vector2i(de->topLeft.x, miny + shift);
+			break;
+		case Room::RIGHT:
+			aj->startingCell2 = Vector2i(aj->topLeft.x, miny + shift);
+			aj->previousCell2 = Vector2i(de->bottomRight.x, miny + shift);
+			break;
+		case Room::UP:
+			aj->startingCell2 = Vector2i(minx + shift, aj->bottomRight.y);
+			aj->previousCell2 = Vector2i(minx + shift, de->topLeft.y);
+			break;
+		case Room::DOWN:
+			aj->startingCell2 = Vector2i(minx + shift, aj->topLeft.y);
+			aj->previousCell2 = Vector2i(minx + shift, de->bottomRight.y);
+			break;
+		}
+
+		addedCount++;
+	}
+	int x = 2;
+}
+
+std::vector<Room*> GeneratedMap::getAdjacentRooms(Room* room)
+{
+	std::vector<Room*> adjacentRooms;
+
+	//a hopefully reusable lambda that will make the code below shorter
+	//it checks if the given room is not null, if it isn't, adds the given
+	//room to the roomsToCheck vector.
+	auto addRoomToCollection = [](Room* room, std::vector<Room*>* adjacentRooms) 
+	{
+		if (room == nullptr)
+			return;
+
+		bool found = false;
+		for (int i = 0; i < adjacentRooms->size(); i++)
+		{
+			if ((*adjacentRooms)[i] == room)
+			{
+				found = true;
+				break;
+			}
+		}
+
+		if (!found)
+			adjacentRooms->push_back(room);
+	};
+
+	//rooms to left
+	if (room->topLeft.x > 0)
+	{
+		int x = room->topLeft.x - 1;
+		for (int y = room->topLeft.y; y <= room->bottomRight.y; y++)
+			addRoomToCollection(getRoomFromCell(x, y), &adjacentRooms);
+	}
+
+	//rooms to right
+	if (room->bottomRight.x < myWidth - 1)
+	{
+		int x = room->bottomRight.x + 1;
+		for (int y = room->topLeft.y; y <= room->bottomRight.y; y++)
+			addRoomToCollection(getRoomFromCell(x, y), &adjacentRooms);
+	}
+
+	//rooms to top
+	if (room->topLeft.y > 0)
+	{
+		int y = room->topLeft.y - 1;
+		for (int x = room->topLeft.x - 1; x <= room->bottomRight.x; x++)
+			addRoomToCollection(getRoomFromCell(x, y), &adjacentRooms);
+	}
+
+	//rooms to bottom
+	if (room->bottomRight.y < myHeight - 1)
+	{
+		int y = room->bottomRight.y + 1;
+		for (int x = room->topLeft.x - 1; x <= room->bottomRight.x; x++)
+			addRoomToCollection(getRoomFromCell(x, y), &adjacentRooms);
+	}
+
+	return adjacentRooms;
+}
+
+Room* GeneratedMap::getRoomFromCell(int x, int y)
+{
+	Room* room;
+	if (x < 0 || x >= myWidth || y < 0 || y >= myHeight)
+		return nullptr;
+	if (myMapCells[y][x] == 'X')
+		return nullptr;
+
+	for (int i = 0; i < rooms.size(); i++)
+	{
+		if (rooms[i]->containsCell(x, y))
+			return rooms[i];
+	}
+	return nullptr;
 }
 
 bool GeneratedMap::isRoomInBounds(Vector2i &topLeft, Vector2i &bottomRight)

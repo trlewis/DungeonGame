@@ -2,7 +2,8 @@ This is just a file to keep track of stuff that needs to be done eventually,
 not really ranked in any sort of order of importance.
 
 ## Dungeon stuff
-[ ] Add cycles to dungeons
+[X] Add cycles to dungeons
+[ ] Fix  cycles in dungeons...
 [X] Draw basic rooms, no connections
 [ ] Draw connections, don't fix corners
 [ ] Fix corners connections broke

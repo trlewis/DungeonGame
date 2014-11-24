@@ -16,7 +16,7 @@
 #include "DungeonMap.hpp"
 #include "GeneratedMap.hpp"
 
-const int SCREEN_WIDTH = 1280;
+const int SCREEN_WIDTH = 1250;//1280;
 const int SCREEN_HEIGHT = 800;
 
 bool init();
@@ -27,6 +27,8 @@ void DrawMap(GeneratedMap&);
 SDL_Window* gWindow = NULL;
 SDL_Surface* gScreenSurface = NULL;
 SDL_Renderer* renderer = NULL;
+
+bool drawCycles = true;
 
 bool init()
 {
@@ -101,6 +103,10 @@ int main(int argc, char* args[])
 
 			if (currentKeyStates[SDL_SCANCODE_ESCAPE])
 				quit = true;
+			if (currentKeyStates[SDL_SCANCODE_C])
+				drawCycles = true;
+			if (!currentKeyStates[SDL_SCANCODE_C])
+				drawCycles = false;
 			if (currentKeyStates[SDL_SCANCODE_G])
 			{
 				map = GeneratedMap(mapwidth, mapheight);
@@ -124,17 +130,17 @@ int main(int argc, char* args[])
 		//SDL_BlitSurface(dm.dungeonImg, NULL, gScreenSurface, &dm.destRect);
 		//SDL_UpdateWindowSurface(gWindow);
 
-		SDL_Rect screenRect;
-		screenRect.x = screenRect.y = 0;
-		screenRect.w =  SCREEN_WIDTH;
-		screenRect.h = SCREEN_HEIGHT;
-		SDL_RenderCopy(renderer, dm.dungeonTex, &screenRect, NULL);// &dm.destRect);
+		//SDL_Rect screenRect;
+		//screenRect.x = screenRect.y = 0;
+		//screenRect.w =  SCREEN_WIDTH;
+		//screenRect.h = SCREEN_HEIGHT;
+		//SDL_RenderCopy(renderer, dm.dungeonTex, &screenRect, NULL);// &dm.destRect);
 		//SDL_RenderCopy(renderer, dm.dungeonTex, NULL, NULL);
 
 		//SDL_RenderCopyEx(renderer, dm.dungeonTex, NULL, NULL, 0, NULL, SDL_FLIP_NONE);
 
 		
-		//DrawMap(map);
+		DrawMap(map);
 
 		SDL_RenderPresent(renderer);
 		SDL_Delay(15);
@@ -152,7 +158,7 @@ void DrawMap(GeneratedMap& map)
 
 	int tilesize = 5;
 	int tilesPerRoom = 10;
-	int roomBuffer = 1;//each room is 2 tiles from the edge of the cell
+	int roomBuffer = 1;//each room is 1 tile from the edge of the cell
 
 	for (int i = 0; i < map.rooms.size(); i++)
 	{
@@ -161,7 +167,9 @@ void DrawMap(GeneratedMap& map)
 		if (room == map.startRoom)
 			SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0xFF, 0xFF);
 		else if (room == map.endRoom)
-			SDL_SetRenderDrawColor(renderer, 0x99, 0x00, 0xFF, 0xFF);
+			SDL_SetRenderDrawColor(renderer, 0x04, 0xC9, 0xC0, 0xFF);
+		else if (room == map.seedRoom)
+			SDL_SetRenderDrawColor(renderer, 0xF2,0x9E,0x0C,0xFF);
 		else
 		{
 			SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);//0xFF, 0x00, 0x00, 0xFF);
@@ -199,6 +207,7 @@ void DrawMap(GeneratedMap& map)
 			}
 		}
 
+		SDL_SetRenderDrawColor(renderer, 0xAA, 0x00, 0xAA, 0xFF);
 		//draw connections
 		if (room->left != nullptr)
 		{
@@ -292,5 +301,44 @@ void DrawMap(GeneratedMap& map)
 			}
 		}
 
+		if (room->hasSecondEntrance && drawCycles)
+		{
+			SDL_SetRenderDrawColor(renderer, 0x00, 0xFF, 0x00, 0xFF);
+			int startx = 0;
+			int starty = 0;
+			int width = 0;
+			int height = 0;
+
+			//left/right transition
+			if (room->startingCell2.x != room->previousCell2.x)
+			{
+				//halfway vertically betwen the two cells
+				starty = (room->startingCell2.y * tilesize * tilesPerRoom) +((tilesPerRoom * tilesize) / 2);
+				height = tilesize * 2;
+				width = tilesize * roomBuffer * 2;
+
+				bool fromRight = room->startingCell2.x < room->previousCell2.x;
+				startx = fromRight ? room->previousCell2.x : room->startingCell2.x;
+				startx *= tilesize * tilesPerRoom;
+				startx -= tilesize * roomBuffer;
+			}
+			else
+			{
+				startx = (room->startingCell2.x * tilesize * tilesPerRoom) + ((tilesPerRoom * tilesize) / 2);
+				width = tilesize * 2;
+				height = tilesize * roomBuffer * 2;
+
+				bool fromTop = room->startingCell2.y > room->previousCell2.y;
+				starty = fromTop ? room->startingCell2.y : room->previousCell2.y;
+				starty *= tilesize * tilesPerRoom;
+				starty -= tilesize * roomBuffer;
+			}
+			SDL_Rect rekt;
+			rekt.x = startx;
+			rekt.y = starty;
+			rekt.w = width;
+			rekt.h = height;
+			SDL_RenderFillRect(renderer, &rekt);
+		}
 	}
 }

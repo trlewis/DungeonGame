@@ -12,10 +12,20 @@ public:
 	Room(Vector2i topLeft, Vector2i bottomRight);
 	Room(Vector2i topLeft, Vector2i bottomRight, Vector2i start);
 
+	static const int LEFT = 1;
+	static const int UP = 2;
+	static const int RIGHT = 3;
+	static const int DOWN = 4;
+
 	/*! The first cell of the room that is walked into from the prev room */
 	Vector2i startingCell; 
 	/*! The exit cell from the previous room */
 	Vector2i previousCell; 
+
+	//hacky solution to add cycles into the dungeon...
+	bool hasSecondEntrance;
+	Vector2i startingCell2;
+	Vector2i previousCell2;
 
 	/*! Top left corner of the room, defines boundary/size.*/
 	Vector2i topLeft;
@@ -32,6 +42,11 @@ public:
 	Room* bottom; //!< The room below this one.
 	Room* top; //!< The room above this one.
 
+	/*! Checks if this room or the other room are connected to each other. */
+	bool areConnected(Room* other);
+
+	int directionOfOtherRoom(Room* other);
+
 	/*! Returns true if the room has no neighbors. */
 	bool isDeadEnd();
 
@@ -41,6 +56,8 @@ public:
 	/*! Checks to see if the given x/y coordinate lies in the space defined by
 	 * The topLeft and bottomRight Vector2i fields.*/
 	bool containsCell(Vector2i &cell);
+
+	bool containsCell(int x, int y);
 
 	// the number of cells this room takes up
 	int getHeight(); //!< How tall this room is.
