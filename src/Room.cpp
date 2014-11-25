@@ -83,7 +83,8 @@ bool Room::containsCell(Vector2i &cell)
 
 bool Room::containsCell(int x, int y)
 {
-	return containsCell(Vector2i(x, y));
+	Vector2i v(x,y);
+	return containsCell(v);
 }
 
 int Room::getHeight()
