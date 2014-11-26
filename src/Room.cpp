@@ -35,14 +35,27 @@ Room::Room(Vector2i topLeft, Vector2i bottomRight, Vector2i start)
 
 bool Room::areConnected(Room* other)
 {
-	if (left == other || right == other || top == other || bottom == other)
+	bool lefta = left != nullptr && left == other;
+	bool righta = right != nullptr && right == other;
+	bool topa = top != nullptr && top == other;
+	bool bottoma = bottom != nullptr && bottom == other;
+	if (lefta || righta || topa || bottoma)
 		return true;
-	
-	if (other->left == this || other->right == this
-		|| other->bottom == this || other->top == this)
-	{
+	//if (left == other || right == other || top == other || bottom == other)
+	//	return true;
+
+	bool leftb = other->left != nullptr && other->left == this;
+	bool rightb = other->right != nullptr && other->right == this;
+	bool topb = other->top != nullptr && other->top == this;
+	bool bottomb = other->bottom != nullptr && other->bottom == this;
+	if (leftb || rightb || topb || bottomb)
 		return true;
-	}
+
+	//if (other->left == this || other->right == this
+	//	|| other->bottom == this || other->top == this)
+	//{
+	//	return true;
+	//}
 
 	return false;
 }
@@ -73,9 +86,14 @@ bool Room::isDeadEnd()
 
 bool Room::containsCell(Vector2i &cell)
 {
-	if (topLeft.x >= cell.x && bottomRight.x <= cell.x)
+	//if (topLeft.x >= cell.x && bottomRight.x <= cell.x)
+	//{
+	//	if (topLeft.y <= cell.y && bottomRight.y >= cell.y)
+	//		return true;
+	//}
+	if (cell.x >= topLeft.x && cell.x <= bottomRight.x)
 	{
-		if (topLeft.y <= cell.y && bottomRight.y >= cell.y)
+		if (cell.y >= topLeft.y && cell.y <= bottomRight.y)
 			return true;
 	}
 	return false;

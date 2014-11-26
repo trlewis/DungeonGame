@@ -34,7 +34,8 @@ public:
 	
 private:
 	/*! What percent of dead-ends we will attempt to add connections to.*/
-	static const int CYCLE_PERCENT = 30;
+	static const int CYCLE_PERCENT = 50;
+	static const int EMPTY_PERCENT = 20;
 
 	int myHeight;
 	int myWidth;

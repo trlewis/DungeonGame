@@ -3,7 +3,8 @@ not really ranked in any sort of order of importance.
 
 ## Dungeon stuff
 [X] Add cycles to dungeons
-[ ] Fix  cycles in dungeons...
+[X] Fix  cycles in dungeons...
+[ ] Fix areas cut-off by 'X' cells rather than regenerate the map
 [X] Draw basic rooms, no connections
 [ ] Draw connections, don't fix corners
 [ ] Fix corners connections broke

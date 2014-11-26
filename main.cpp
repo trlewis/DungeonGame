@@ -16,8 +16,8 @@
 #include "DungeonMap.hpp"
 #include "GeneratedMap.hpp"
 
-const int SCREEN_WIDTH = 1250;//1280;
-const int SCREEN_HEIGHT = 800;
+const int SCREEN_WIDTH = 800;
+const int SCREEN_HEIGHT = 600;
 
 bool init();
 void close();
@@ -71,8 +71,8 @@ void close()
 
 int main(int argc, char* args[])
 {
-	int mapwidth = 25;
-	int mapheight = 16;
+	int mapwidth = 33;//25;
+	int mapheight = 25;//16;
 
 	GeneratedMap map(mapwidth, mapheight);
 	map.generateMap();
@@ -156,11 +156,11 @@ void DrawMap(GeneratedMap& map)
 
 	Uint8 red = 80;
 
-	int tilesize = 5;
-	int tilesPerRoom = 10;
+	int tilesize = 3;//5;
+	int tilesPerRoom = 8;// 10;
 	int roomBuffer = 1;//each room is 1 tile from the edge of the cell
 
-	for (int i = 0; i < map.rooms.size(); i++)
+	for (unsigned int i = 0; i < map.rooms.size(); i++)
 	{
 		Room* room = map.rooms[i];
 
@@ -206,6 +206,8 @@ void DrawMap(GeneratedMap& map)
 				SDL_RenderFillRect(renderer, &rekt);
 			}
 		}
+
+		
 
 		SDL_SetRenderDrawColor(renderer, 0xAA, 0x00, 0xAA, 0xFF);
 		//draw connections
