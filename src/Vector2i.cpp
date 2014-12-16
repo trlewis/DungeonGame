@@ -1,4 +1,5 @@
 #include "Vector2i.hpp"
+#include <cmath>
 
 Vector2i::Vector2i() {}
 
@@ -10,13 +11,5 @@ Vector2i::Vector2i(int xVal, int yVal)
 
 int Vector2i::deltaDistance(const Vector2i& a, const Vector2i& b)
 {
-	int dx = a.x - b.x;
-	if (dx < 0)
-		dx = -dx;
-
-	int dy = a.y - b.y;
-	if (dy < 0)
-		dy = -dy;
-
-	return dx + dy;
+	return std::abs(a.x - b.x) + std::abs(a.y - b.y);
 }

@@ -6,11 +6,11 @@
 #include <string>
 #include <time.h> //time()
 
-
 GeneratedMap::GeneratedMap(const int width, const int height)
 {
 	myWidth = width;
 	myHeight = height;
+	generateMap();
 }
 
 void GeneratedMap::generateMap()
@@ -22,7 +22,7 @@ void GeneratedMap::generateMap()
 		std::vector<char> row = std::vector<char>();
 		for (int x = 0; x < myWidth; x++)
 			row.push_back('.');
-		
+
 		myMapCells.push_back(row);
 	}
 
@@ -42,7 +42,7 @@ void GeneratedMap::generateMap()
 
 	//add in some cycles to reduce backtracking
 	fixTree();
-} 
+}
 
 void GeneratedMap::printMap(std::string message)
 {
@@ -76,7 +76,7 @@ bool GeneratedMap::allUnassignedReachable()
 	{
 		Vector2i cell = queue.front();
 		queue.pop();
-		
+
 		//left
 		if (cell.x > 0 && myMapCells[cell.y][cell.x - 1] == '.')
 		{
@@ -255,8 +255,8 @@ Room* GeneratedMap::createRoom(Vector2i entrance, Vector2i from)
 		// up/down transition
 
 		//set left and right edges of room
-		int xmin = std::max(0, entrance.x - width);	
-		int shiftHoriz = (width == 0 || entrance.x - xmin == 0) 
+		int xmin = std::max(0, entrance.x - width);
+		int shiftHoriz = (width == 0 || entrance.x - xmin == 0)
 			? 0 : rand() % (entrance.x - xmin);// width;
 		topLeft.x = xmin + shiftHoriz;
 		bottomRight.x = topLeft.x + width;
@@ -285,7 +285,7 @@ Room* GeneratedMap::createRoom(Vector2i entrance, Vector2i from)
 	{
 		// left/right transition
 		int ymin = std::max(0, entrance.y - height);
-		int shiftVert = (height == 0 || entrance.y - ymin == 0) 
+		int shiftVert = (height == 0 || entrance.y - ymin == 0)
 			? 0 : rand() % (entrance.y - ymin);//height;
 		topLeft.y = ymin + shiftVert;
 		bottomRight.y = topLeft.y + height;
@@ -318,7 +318,6 @@ Room* GeneratedMap::createRoom(Vector2i entrance, Vector2i from)
 	}
 	return nullptr;
 }
-
 
 void GeneratedMap::fillRooms()
 {
@@ -515,7 +514,6 @@ void GeneratedMap::fillRooms()
 		endRoom = finish;
 		break;
 	} while (true);
-
 }
 
 void GeneratedMap::fixTree()
@@ -549,10 +547,10 @@ void GeneratedMap::fixTree()
 		int i2 = 0;
 		Room* aj = nullptr;
 		//find first non-connected room
-		do 
+		do
 		{
 			if (!de->areConnected(adjacentRooms[i2]))
-				aj = adjacentRooms[i2];			
+				aj = adjacentRooms[i2];
 			i2++;
 		} while (i2 < adjacentRooms.size() && aj == nullptr);
 
@@ -574,14 +572,14 @@ void GeneratedMap::fixTree()
 			miny = std::max(de->topLeft.y, aj->topLeft.y);
 			int maxy = std::min(de->bottomRight.y, aj->bottomRight.y);
 			int dy = std::abs(maxy - miny);
-			shift = dy <= 0 ? 0 : rand() % (dy +1);
+			shift = dy <= 0 ? 0 : rand() % (dy + 1);
 		}
 		else if (directionOfOther == Room::UP || directionOfOther == Room::DOWN)
 		{
 			minx = std::max(de->topLeft.x, aj->topLeft.x);
 			int maxx = std::min(de->bottomRight.x, aj->bottomRight.x);
 			int dx = std::abs(maxx - minx);
-			shift = dx <= 0 ? 0 : rand() % (dx +1);
+			shift = dx <= 0 ? 0 : rand() % (dx + 1);
 		}
 
 		switch (directionOfOther)
@@ -616,7 +614,7 @@ std::vector<Room*> GeneratedMap::getAdjacentRooms(Room* room)
 	//it checks if the given room is not null, if it isn't, adds the given
 	//room to the roomsToCheck vector.
 	auto addRoomToCollection = [&adjacentRooms](Room* room) mutable
-	-> void
+		-> void
 	{
 		if (room == nullptr)
 			return;
@@ -634,7 +632,7 @@ std::vector<Room*> GeneratedMap::getAdjacentRooms(Room* room)
 		if (!found)
 			adjacentRooms.push_back(room);
 	};
-	
+
 	//rooms to left
 	if (room->topLeft.x > 0)
 	{
@@ -725,12 +723,12 @@ void GeneratedMap::removeEmpties()
 
 void GeneratedMap::replacePeriods(Vector2i topLeft, Vector2i bottomRight, char replacement)
 {
-	for(int y = topLeft.y ; y <= bottomRight.y ; y++)
+	for (int y = topLeft.y; y <= bottomRight.y; y++)
 	{
-		for(int x = topLeft.x ; x <= bottomRight.x ; x++)
+		for (int x = topLeft.x; x <= bottomRight.x; x++)
 		{
-			if(myMapCells[y][x] == '.')			
-				myMapCells[y][x] = replacement;			
+			if (myMapCells[y][x] == '.')
+				myMapCells[y][x] = replacement;
 		}
 	}
 }

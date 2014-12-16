@@ -17,7 +17,6 @@ Room::Room(Vector2i start)
 	startingCell = start;
 }
 
-
 Room::Room(Vector2i topLeft, Vector2i bottomRight)
 {
 	init();
@@ -41,8 +40,6 @@ bool Room::areConnected(Room* other)
 	bool bottoma = bottom != nullptr && bottom == other;
 	if (lefta || righta || topa || bottoma)
 		return true;
-	//if (left == other || right == other || top == other || bottom == other)
-	//	return true;
 
 	bool leftb = other->left != nullptr && other->left == this;
 	bool rightb = other->right != nullptr && other->right == this;
@@ -50,12 +47,6 @@ bool Room::areConnected(Room* other)
 	bool bottomb = other->bottom != nullptr && other->bottom == this;
 	if (leftb || rightb || topb || bottomb)
 		return true;
-
-	//if (other->left == this || other->right == this
-	//	|| other->bottom == this || other->top == this)
-	//{
-	//	return true;
-	//}
 
 	return false;
 }
@@ -79,18 +70,11 @@ int Room::directionOfOtherRoom(Room* other)
 
 bool Room::isDeadEnd()
 {
-	// is the same as (generally... depending on what NULL is defined as)
-	// left == NULL
 	return !left && !right && !bottom && !top;
 }
 
 bool Room::containsCell(Vector2i &cell)
 {
-	//if (topLeft.x >= cell.x && bottomRight.x <= cell.x)
-	//{
-	//	if (topLeft.y <= cell.y && bottomRight.y >= cell.y)
-	//		return true;
-	//}
 	if (cell.x >= topLeft.x && cell.x <= bottomRight.x)
 	{
 		if (cell.y >= topLeft.y && cell.y <= bottomRight.y)
@@ -101,7 +85,7 @@ bool Room::containsCell(Vector2i &cell)
 
 bool Room::containsCell(int x, int y)
 {
-	Vector2i v(x,y);
+	Vector2i v(x, y);
 	return containsCell(v);
 }
 
