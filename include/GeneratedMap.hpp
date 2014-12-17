@@ -75,11 +75,13 @@ private:
 	/*! Gets all the rooms to the top/left/right/bottom of the given one. */
 	std::vector<Room*> getAdjacentRooms(Room* room);
 
+	void addRoomToCollection(std::vector<Room*>* adjacentRooms, Room* room);
+
 	/*! Gets the room that is within the */
 	Room* getRoomFromCell(int x, int y);
 
 	/*! Checks to see that the given boundaries are within the dungeon. */
-	bool isRoomInBounds(Vector2i &topLeft, Vector2i &bottomRight);
+	bool isRoomInBounds(Vector2i topLeft, Vector2i bottomRight);
 
 	/*! Adds the room to the 2D character array of cells, thus reserving
 	 * those cells.*/

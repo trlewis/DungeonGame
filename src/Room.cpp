@@ -9,6 +9,10 @@ void Room::init()
 	right = nullptr;
 	top = nullptr;
 	bottom = nullptr;
+
+	//not having this line in was causing all the screwed up cycle connections
+	//lesson learned: instatiate your variables...
+	hasSecondEntrance = false;
 }
 
 Room::Room(Vector2i start)

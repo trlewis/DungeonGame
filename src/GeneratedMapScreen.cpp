@@ -1,3 +1,4 @@
+#include <iostream>
 #include "GeneratedMapScreen.hpp"
 
 GeneratedMapScreen::GeneratedMapScreen(const int width, const int height)

@@ -1,18 +1,19 @@
 #OBJS specifiles which files to compile
-OBJS = main.cpp src/DungeonMap.cpp src/GeneratedMap.cpp src/Room.cpp src/Vector2i.cpp
+OBJS = main.cpp src/GeneratedMapScreen.cpp src/GeneratedMap.cpp src/Room.cpp src/Vector2i.cpp src/StateManager.cpp 
 
 #CC specifies which compiler to use
 CC = g++
 
 #COMPILER_FLAGS specifies additional compilation options
 # -w suppress all warnings
-COMPILER_FLAGS = -w -std=gnu++0x
+COMPILER_FLAGS = -std=c++11 -Wall
 
 DEBUGFLAGS = -g -O0 -ggdb
 RELEASEFLAGS = -O3
 
 # LINKER_FLAGS specifies the libraries we're linking to
-LINKER_FLAGS = -lSDL2 -lSDL2_image
+#LINKER_FLAGS = -lSDL2 -lSDL2_image
+LINKER_FLAGS = -lsfml-graphics -lsfml-window -lsfml-system 
 
 #OBJ_NAME specifies the name of the executable
 OBJ_NAME = bin/dungeongame.sh
