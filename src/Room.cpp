@@ -38,6 +38,8 @@ Room::Room(Vector2i topLeft, Vector2i bottomRight, Vector2i start)
 
 bool Room::areConnected(Room* other)
 {
+	//this function got long during debugging, decided to keep it that way
+
 	bool lefta = left != nullptr && left == other;
 	bool righta = right != nullptr && right == other;
 	bool topa = top != nullptr && top == other;
